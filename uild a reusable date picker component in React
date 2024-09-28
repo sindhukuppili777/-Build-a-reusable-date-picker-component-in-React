@@ -1,0 +1,135 @@
+//DatePicker.tsx:-
+
+import React, { useState } from 'react';
+
+const DatePicker = ({ onDateSelect }) => {
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  const handleDateChange = (e) => {
+    const date = e.target.value;
+    setSelectedDate(date);
+    onDateSelect(date);
+  };
+
+  return (
+    <div className="flex flex-col space-y-2">
+      <label>Select Date:</label>
+      <input 
+        type="date"
+        value={selectedDate || ''}
+        onChange={handleDateChange}
+        className="border p-2 rounded-lg"
+      />
+    </div>
+  );
+};
+
+export default DatePicker;
+
+//RecurrencePattern.tsx:-
+
+import React from 'react';
+import { useRecurrenceStore } from '../store/recurrenceStore';
+
+const RecurrencePattern = () => {
+  const { setRecurrence, recurrence } = useRecurrenceStore();
+
+  const handlePatternChange = (e) => {
+    setRecurrence({ ...recurrence, pattern: e.target.value });
+  };
+
+  return (
+    <div>
+      <label>Recurrence Pattern:</label>
+      <select onChange={handlePatternChange} className="border p-2 rounded-lg">
+        <option value="daily">Daily</option>
+        <option value="weekly">Weekly</option>
+        <option value="monthly">Monthly</option>
+        <option value="yearly">Yearly</option>
+      </select>
+    </div>
+  );
+};
+
+export default RecurrencePattern;
+
+
+//MiniCalendar.tsx:-
+
+import React from 'react';
+import { useRecurrenceStore } from '../store/recurrenceStore';
+
+const MiniCalendar = () => {
+  const { recurrence } = useRecurrenceStore();
+
+  // Logic to calculate recurring dates goes here
+
+  return (
+    <div className="mini-calendar border p-4">
+      <p>Recurrence Preview:</p>
+      {/* Render preview of selected recurring dates */}
+    </div>
+  );
+};
+
+
+
+//store/recurrenceStore.ts:-
+
+import create from 'zustand';
+
+const useRecurrenceStore = create((set) => ({
+  recurrence: {
+    pattern: 'daily',
+    startDate: null,
+    endDate: null,
+    customOptions: {},
+  },
+  setRecurrence: (newRecurrence) => set({ recurrence: newRecurrence }),
+}));
+
+export { useRecurrenceStore };
+
+
+export default MiniCalendar;
+
+
+//Integration & Layout:-
+
+import React, { useState } from 'react';
+import DatePicker from '../components/DatePicker';
+import RecurrencePattern from '../components/RecurrencePattern';
+import MiniCalendar from '../components/MiniCalendar';
+import { useRecurrenceStore } from '../store/recurrenceStore';
+
+export default function RecurringDatePicker() {
+  const { setRecurrence } = useRecurrenceStore();
+
+  const handleDateSelect = (date) => {
+    setRecurrence((prev) => ({ ...prev, startDate: date }));
+  };
+
+  return (
+    <div className="p-4">
+      <h1 className="text-xl font-bold">Recurring Date Picker</h1>
+      <div className="space-y-4">
+        <DatePicker onDateSelect={handleDateSelect} />
+        <RecurrencePattern />
+        <MiniCalendar />
+      </div>
+    </div>
+  );
+}
+
+
+
+//Testing:-
+import { render, fireEvent } from '@testing-library/react';
+import RecurrencePattern from '../components/RecurrencePattern';
+
+test('recurrence pattern change updates state', () => {
+  const { getByLabelText } = render(<RecurrencePattern />);
+  const selectElement = getByLabelText('Recurrence Pattern');
+  fireEvent.change(selectElement, { target: { value: 'weekly' } });
+  expect(selectElement.value).toBe('weekly');
+});
