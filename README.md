@@ -97,10 +97,7 @@ Next.js: Framework for server-side rendering and React.
 Tailwind CSS: Utility-first CSS framework for styling.
 Zustand: Simple and scalable state management library for React.
 React Testing Library & Jest: For unit and integration testing.
-Screencast
-Link to Screencast Video
 
-This screencast demonstrates the functionality of the recurring date picker component and provides a walkthrough of the code.
 
 License
 This project is licensed under the MIT License. See the LICENSE file for details.
